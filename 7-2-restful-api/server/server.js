@@ -27,27 +27,6 @@ app.get("/api/songs", async (req, res) => {
         if (!s) return res.status(404).json({ message: "Song not found" });
         res.json(s);
       });
-      
-/*  =================================================================
- *  TODO 4— GET /api/songs (Read all) file: server/server.js
- *  =================================================================
- *  Goal:
- *    - Use Song.find() to get all songs from DB.
- *    - Sort by newest first (createdAt descending).
- *    - Return JSON array of songs.
- *
- *  Syntax hint:
-      app.get("__________", async (____, res) => {
-        const rows = await __________.find().sort({ createdAt: ___ });
-        res.json(____);
-      });
-
-      app.get("______________", async (req, res) => {
-        const s = await __________.findById(__________);
-        if (!s) return res.status(___).json({ message: "______________" });
-        res.json(____);
-      });
- */
 
 // api/songs (Insert song)
 app.post("/api/songs", async (req, res) => {
@@ -65,7 +44,19 @@ app.post("/api/songs", async (req, res) => {
       });
 
 // /api/songs/:id (Update song)
-
+app.put("/api/songs/:id", async (req, res) => {
+        try {
+          const updated = await Song.findByIdAndUpdate(
+            req.params.id,
+            req.body || {},
+            { new: true, runValidators: true, context: "query" }
+          );
+          if (!updated) return res.status(404).json({ message: "Song not found" });
+          res.json(updated);
+        } catch (err) {
+          res.status(400).json({ message: err.message || "Update failed" });
+        }
+      });
 
 // /api/songs/:id (Delete song)
 
